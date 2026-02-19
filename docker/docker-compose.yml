@@ -10,13 +10,19 @@ services:
     container_name: basic-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: basicarch
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      TZ: ${TZ}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - ./volumes/postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '${POSTGRES_CPU_LIMIT:-1.0}'
+          memory: '${POSTGRES_MEM_LIMIT:-1G}'
 
   # --- RabbitMQ ---
   rabbitmq:
@@ -24,13 +30,19 @@ services:
     container_name: basic-rabbitmq
     restart: unless-stopped
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      TZ: ${TZ}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - ./volumes/rabbitmq-data:/var/lib/rabbitmq
+    deploy:
+      resources:
+        limits:
+          cpus: '${RABBITMQ_CPU_LIMIT:-0.5}'
+          memory: '${RABBITMQ_MEM_LIMIT:-512M}'
 
   # --- Spring Boot API ---
   api:
@@ -43,15 +55,21 @@ services:
       - postgres
       - rabbitmq
     environment:
+      TZ: ${TZ}
       SPRING_PROFILES_ACTIVE: local
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/basicarch
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_RABBITMQ_HOST: rabbitmq
     ports:
       - "8080:8080"
     volumes:
       - ./volumes/api-logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '${API_CPU_LIMIT:-1.0}'
+          memory: '${API_MEM_LIMIT:-1G}'
 
   # --- Vue 3 前端 (開發模式) ---
   web:
@@ -62,7 +80,14 @@ services:
     restart: unless-stopped
     depends_on:
       - api
+    environment:
+      TZ: ${TZ}
     ports:
       - "3000:80"
     volumes:
       - ./volumes/nginx-logs:/var/log/nginx
+    deploy:
+      resources:
+        limits:
+          cpus: '${WEB_CPU_LIMIT:-0.5}'
+          memory: '${WEB_MEM_LIMIT:-512M}'

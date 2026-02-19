@@ -47,6 +47,8 @@ Desktop.ini
 
 # === Docker ===
 docker/.env
+docker/.env.local
+docker/.env.*
 docker/volumes/*
 
 # === Logs ===
