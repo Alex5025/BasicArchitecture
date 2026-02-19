@@ -25,15 +25,22 @@ public class QuartzSchedulerService implements SchedulerService {
 
     private static final String JOB_GROUP = "DEFAULT_GROUP";
 
+    @org.springframework.beans.factory.annotation.Value("${scheduler.job-handler-url:http://localhost:8080}")
+    private String jobHandlerUrl;
+
     private final Scheduler scheduler;
 
     @Override
     public void createJob(String jobName, String cronExpression,
                           String payload) {
         try {
-            JobDetail jobDetail = JobBuilder.newJob()
+            String targetUrl = jobHandlerUrl + "/api/job-handlers/" + jobName;
+            
+            JobDetail jobDetail = JobBuilder.newJob(org.inariforge.scheduler.job.HttpJob.class)
                     .withIdentity(jobName, JOB_GROUP)
-                    .usingJobData("payload", payload)
+                    .usingJobData(org.inariforge.scheduler.job.HttpJob.URL, targetUrl)
+                    .usingJobData(org.inariforge.scheduler.job.HttpJob.PAYLOAD, payload)
+                    .usingJobData(org.inariforge.scheduler.job.HttpJob.METHOD, "POST")
                     .storeDurably()
                     .build();
 
@@ -44,7 +51,7 @@ public class QuartzSchedulerService implements SchedulerService {
                     .build();
 
             scheduler.scheduleJob(jobDetail, trigger);
-            log.info("Quartz 排程已建立: {} [{}]", jobName, cronExpression);
+            log.info("Quartz 排程已建立: {} [{}] -> {}", jobName, cronExpression, targetUrl);
         } catch (SchedulerException e) {
             log.error("建立 Quartz 排程失敗: {}", jobName, e);
             throw new RuntimeException("建立排程失敗", e);

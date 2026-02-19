@@ -1,0 +1,38 @@
+# Validation
+.git/
+.gitignore
+.dockerignore
+LICENSE
+README.md
+
+# Build
+target/
+*.class
+.mvn/
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & Temp
+*.log
+logs/
+temp/
+tmp/
+
+# Docker Volumes (Do not send data to build context)
+docker/volumes/
+
+# Dependencies
+basic-web/node_modules/
+basic-web/dist/
+coverage/
