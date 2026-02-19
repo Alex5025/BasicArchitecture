@@ -1,0 +1,17 @@
+# ====================================
+# GCP Cloud Run 環境設定
+# ====================================
+spring:
+  datasource:
+    url: jdbc:postgresql:///${DB_NAME}?cloudSqlInstance=${CLOUD_SQL_INSTANCE}&socketFactory=com.google.cloud.sql.postgres.SocketFactory
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+# GCP 設定
+gcp:
+  project-id: ${GCP_PROJECT_ID}
+  location: ${GCP_LOCATION:asia-east1}
+  cloud-tasks:
+    handler-url: ${CLOUD_TASKS_HANDLER_URL}
+  scheduler:
+    handler-url: ${CLOUD_SCHEDULER_HANDLER_URL}

@@ -1,0 +1,22 @@
+# ====================================
+# 本地開發環境設定 (Docker)
+# ====================================
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/basicarch
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  # RabbitMQ
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # Quartz
+  quartz:
+    job-store-type: memory
+    properties:
+      org.quartz.threadPool.threadCount: 5

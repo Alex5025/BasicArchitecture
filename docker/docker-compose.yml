@@ -1,0 +1,68 @@
+# ====================================
+# BasicArchitecture 本地開發環境
+# Volume 資料皆存放於 docker/ 資料夾下
+# ====================================
+
+services:
+  # --- PostgreSQL ---
+  postgres:
+    image: postgres:16
+    container_name: basic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: basicarch
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgres-data:/var/lib/postgresql/data
+
+  # --- RabbitMQ ---
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: basic-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./volumes/rabbitmq-data:/var/lib/rabbitmq
+
+  # --- Spring Boot API ---
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: basic-api
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/basicarch
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./volumes/api-logs:/app/logs
+
+  # --- Vue 3 前端 (開發模式) ---
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    container_name: basic-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    volumes:
+      - ./volumes/nginx-logs:/var/log/nginx

@@ -1,0 +1,16 @@
+# === Cloud Run 最佳化 Dockerfile ===
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY basic-api/target/*.jar app.jar
+
+# Cloud Run 預設使用 PORT 環境變數
+ENV PORT=8080
+EXPOSE ${PORT}
+
+ENTRYPOINT ["java", \
+    "-XX:+UseG1GC", \
+    "-XX:MaxRAMPercentage=75.0", \
+    "-Djava.security.egd=file:/dev/./urandom", \
+    "-Dserver.port=${PORT}", \
+    "-jar", "app.jar"]
