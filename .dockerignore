@@ -3,7 +3,7 @@
 .gitignore
 .dockerignore
 LICENSE
-README.md
+*.md
 
 # Build
 target/
