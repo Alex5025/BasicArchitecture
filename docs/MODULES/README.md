@@ -1,5 +1,7 @@
 # 專案模組說明 (Project Modules)
 
+關於整體設計概覽，請參閱 [系統架構說明](../ARCHITECTURE.md).
+
 本專案採用 Maven 多模組架構，各模組職責如下：
 
 ## [基礎通用模組 (basic-common)](BASIC_COMMON.md)

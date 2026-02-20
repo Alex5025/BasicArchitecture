@@ -4,6 +4,12 @@
 
 ## 文件導引 (Documentation)
 
+- **[系統架構說明 (System Architecture)](docs/ARCHITECTURE.md)**  
+  介紹專案整體設計、模組相依關係與技術棧（含 Nginx）。
+
+- **[業務流程指引 (Business Flow Guide)](docs/GUIDES/BUSINESS_FLOW.md)**  
+  說明排程設定、批次啟動與各組件間的作業流程。
+
 - **[環境建置與安裝 (Setup & Installation)](docs/SETUP/README.md)**  
   包含 Pre-commit、Docker、RabbitMQ 等環境準備步驟。
 
